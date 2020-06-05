@@ -1,7 +1,9 @@
 // modules =================================================
 const express = require('express');
 const app = express();
-const router = express.Router();
+const bodyParser = require('body-parser')
+var createError = require('http-errors');
+const AppraisalRouter = express.Router();
 var mongoose = require('mongoose');
 // set our port
 const port = 3000;
@@ -13,12 +15,16 @@ console.log("connecting--",db);
 
 mongoose.connect(db.url,{ useNewUrlParser: true, useUnifiedTopology: true}); //Mongoose connection created
 
-app.get('/', (req, res) => res.send('WTA Project'));
+app.get('/', (req, res) => {
+    res.send('WTA Project');
+    console.log("/",req.method,req.statusCode)
+});
 
 
 var Appraisals = require('./app/models/appraisals');
 
-router.route('/api/appraisals')
+AppraisalRouter.use(bodyParser.json());
+AppraisalRouter.route('/')
 .get((req,res,next)=>{
     Appraisals.find((err, ans)=> {
         if (err)
@@ -30,9 +36,12 @@ router.route('/api/appraisals')
     });
 })
 .post((req,res,next)=>{
-    var student = new Appraisals(); // create a new instance of the student model
-    student.name = req.body.name; // set the student name (comes from the request)
-    student.save(function(err) {
+    var appraisal = new Appraisals(); // create a new instance of the student model
+    appraisal.author = req.body.author; // set the student name (comes from the request)
+    appraisal.rating = req.body.rating;
+    appraisal.comments = req.body.comments;
+    appraisal.reviewee = req.body.reviewee;
+    appraisal.save(function(err) {
         if (err)
         {
             res.send(err);
@@ -53,7 +62,7 @@ router.route('/api/appraisals')
     .catch((err) => next(err));   
 })
 
-router.route('/api/appraisals/:aprid')
+AppraisalRouter.route('/:aprid')
 .get((req,res,next)=>{
     Appraisals.findById(req.params.aprid)
     .then((ans) => {
@@ -84,4 +93,10 @@ router.route('/api/appraisals/:aprid')
     .catch((err) => next(err));
 })
 
+app.use('/api/appraisals',AppraisalRouter);
+app.use(function(req, res, next) {
+    next(createError(404));
+});
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+//https://www.tutorialspoint.com/meanjs/meanjs_building_single_page_with_angular.htm
