@@ -25,7 +25,9 @@ mongoose.connect('mongodb://localhost:27017/test',{ useNewUrlParser: true, useUn
 .catch(err=>{
     console.error("ERROR",err);
 }); //Mongoose connection created
+
 app.use('/api/appraisals',require('./routes/appraisal_router'));
+app.use('/api/users',require('./routes/login_router'));
 app.get('*', function(req, res) {
     const allowed = [
         '.js',
@@ -33,6 +35,7 @@ app.get('*', function(req, res) {
         '.png',
         '.jpg',
         '.ts',
+        '.html'
     ];
     if (allowed.filter(ext => req.url.indexOf(ext) > 0).length > 0) {
         res.sendFile(path.resolve(`public/${req.url}`));

@@ -1,8 +1,5 @@
 var mongoose = require('mongoose');
 
-const dummy = require('mongoose-dummy');
-const ignoredFields = ['_id','created_at', '__v', /detail.*_info/];
-
 // define our students model
 // module.exports allows us to pass this to other files when it is called
 var AppraisalSchema = new mongoose.Schema({
