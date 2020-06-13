@@ -1,8 +1,11 @@
 var mongoose = require('mongoose');
 
+const dummy = require('mongoose-dummy');
+const ignoredFields = ['_id','created_at', '__v', /detail.*_info/];
+
 // define our students model
 // module.exports allows us to pass this to other files when it is called
-module.exports = mongoose.model('Appraisal', {
+var AppraisalSchema = new mongoose.Schema({
    author : {
       type : String, 
       required: true
@@ -11,6 +14,10 @@ module.exports = mongoose.model('Appraisal', {
       type: Number,
       min: 1,
       max: 5,
+      required: true
+   },
+   subject: {
+      type: String,
       required: true
    },
    comments: {
@@ -22,3 +29,7 @@ module.exports = mongoose.model('Appraisal', {
       required: true
    }
 });
+var AppraisalsModel = mongoose.model('Appraisal', AppraisalSchema);
+
+
+module.exports = AppraisalsModel
