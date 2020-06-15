@@ -3,7 +3,7 @@
         <div class="col-sm-12 my-auto">
         <div class="card card-block w-50 mx-auto">
             <div class="card-body">
-            <form method="POST">
+            <form>
                 <div class="form-group">
                 <input type="email" ng-model="user.email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Email Address (john@doe.com)">
                 </div>
@@ -14,27 +14,10 @@
                 <input type="checkbox" class="form-check-input" id="exampleCheck1">
                 <label class="form-check-label" for="exampleCheck1">Remember Me</label>
                 </div>
-                <button type="submit" ng-click="loginVerify()" class="btn btn-primary">Submit</button>
+                <button type="button" ng-click="loginVerify()" class="btn btn-primary">Submit</button>
             </form>
             </div>
         </div>
         </div>
     </div>
 </div>
-<table class="table table-striped table-bordered">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Phone</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr ng-repeat="contact in contacts">
-        <td>{{ contact.name }}</td>
-        <td>{{ contact.email }}</td>
-        <td>{{ contact.phone }}</td>
-        </td>
-      </tr>
-    </tbody>
-  </table>
