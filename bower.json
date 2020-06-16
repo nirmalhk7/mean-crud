@@ -6,6 +6,7 @@
         "font-awesome": "latest",
         "animate.css": "latest",
         "angular": "latest",
+        "angular-cookies": "latest",
         "angular-route": "latest"   
     }
 }

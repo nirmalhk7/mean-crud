@@ -1,12 +1,11 @@
-let root_app=angular.module('mean-crud', ['ngRoute','LoginService']);
+let root_app=angular.module('mean-crud', ['ngRoute','LoginService','ngCookies']);
 
-root_app.factory('state', function () {
+root_app.factory('state',function () {
 
     var data = {
         id: 0,
         email: "",
-        role: "",
-        redirect : ""
+        role: ""
     };
 
     return {
@@ -30,15 +29,23 @@ root_app.factory('state', function () {
     };
 });
 
-root_app.controller('LoginController',['$scope','LoginService','$window','state',function($scope,LoginService,$window,state){
-    $scope.loginVerify = function () {
-        $event.preventDefault();
+root_app.controller('LoginController',['$scope','LoginService','$window','state','$cookies',function($scope,LoginService,$window,state,$cookies){
+    if($cookies.get('email'))
+    {
+        window.location.href="/dashboard"
+    }
+    $scope.loginVerify = function ($event) {
+        event.preventDefault();
         LoginService.verify($scope.user,'api/users/login').then(response=>{
             if(response.data.length)
             {
                 console.log('RESPONSE1',response.data);
                 state.setAll(response.data[0],'/dashboard',$window)
                 console.log('STATE',state.getAll());
+                $cookies.put("email", response.data[0].email);
+                $cookies.put("role", response.data[0].role);
+                $cookies.put("id", response.data[0]._id);
+                
                // alert('HI')
                 $window.location.href = '/dashboard';
             }
@@ -52,13 +59,23 @@ root_app.controller('LoginController',['$scope','LoginService','$window','state'
     console.log("LoginController",state.getAll())
 }]);
 
-root_app.controller('DashboardController',['$scope','state','LoginService','$window',function($scope,state,LoginService,window){
-    console.log("DashboardController",state.getAll());
-    if(state.getEmail()=="")
+root_app.controller('DashboardController',['$scope','state','LoginService','$window','$cookies',function($scope,state,LoginService,window,$cookies){
+    $scope.user = state.getAll();
+    if(!$cookies.get('email'))
     {
         alert('Log In to Access')
-      //  window.location.href="/"
+        window.location.href="/"
     }
+    $scope.logout = function(){
+        $cookies.remove('email');
+        $cookies.remove('id');
+        $cookies.remove('role');
+        window.location.href="/"
+    }
+    $scope.username = $cookies.get('email');
+    LoginService.getEmployees('/api/users/',{"boss_email":$cookies.get('email')}).then(response=>{
+        $scope.employees=response.data;
+    });
 }]);
 root_app.config(['$routeProvider','$locationProvider', function($routeProvider, $locationProvider) {
     $routeProvider

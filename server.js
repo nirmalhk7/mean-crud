@@ -6,9 +6,9 @@ const http = require('http');
 const bodyParser = require('body-parser')
 var createError = require('http-errors');
 const AppraisalRouter = express.Router();
-var mongoose = require('mongoose');
+var db=require('./config/db');
 // set our port
-const port = 3000;
+const port = 3000 || process.env.PORT;
 // configuration ===========================================
 
 // Parsers for POST data
@@ -16,15 +16,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // config files
-mongoose.connect('mongodb://localhost:27017/test',{ useNewUrlParser: true, useUnifiedTopology: true},()=>{
-    console.log("Connecting with Mongoose!")
-})
-.then(msg=>{
-    console.log("Succesful Connection");
-})
-.catch(err=>{
-    console.error("ERROR",err);
-}); //Mongoose connection created
 
 app.use('/api/appraisals',require('./routes/appraisal_router'));
 app.use('/api/users',require('./routes/login_router'));

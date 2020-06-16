@@ -5,9 +5,13 @@ angular.module('LoginService', []).factory('LoginService', ['$http','$window', f
     let postfn = function (user_inp,url_endpt) {
         return $http.post(url_endpt, user_inp)
     };
-
+    let getfn = function(url_endpt,search_params){
+        console.log("searching",search_params);
+        return $http.get(url_endpt,{params:search_params})
+    }
     let returnVal = {
-        verify: postfn
+        verify: postfn,
+        getEmployees: getfn,
     }
     return returnVal;
 }]);

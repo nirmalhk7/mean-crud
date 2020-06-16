@@ -5,7 +5,8 @@ var mongoose = require('mongoose');
 var AppraisalSchema = new mongoose.Schema({
    author : {
       type : String, 
-      required: true
+      required: true,
+      match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
    },
    rating: {
       type: Number,
@@ -23,10 +24,11 @@ var AppraisalSchema = new mongoose.Schema({
    },
    reviewee: {
       type : String, 
-      required: true
+      required: true,
+      match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
    }
 });
-var AppraisalsModel = mongoose.model('Appraisal', AppraisalSchema);
 
 
-module.exports = AppraisalsModel
+
+module.exports = mongoose.model('Appraisal', AppraisalSchema);
