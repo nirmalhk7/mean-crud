@@ -6,14 +6,15 @@ var AppraisalRouter = express.Router();
 AppraisalRouter.use(bodyParser.json());
 AppraisalRouter.route('/')
 .get((req,res,next)=>{
-    Appraisals.find((err, ans)=> {
+    Appraisals.find(req.query,(err, ans)=> {
         if (err)
         {
             res.send(err);
             res.statusCode = 403;
         }
         res.json(ans); // return all students in JSON format
-        console.log("/api/appraisals",req.method,200)
+        console.log("/api/appraisals",req.method,200);
+        console.log(ans);
     });
 })
 .post((req,res,next)=>{

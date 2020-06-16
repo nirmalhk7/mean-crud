@@ -1,35 +1,6 @@
 let root_app=angular.module('mean-crud', ['ngRoute','LoginService','ngCookies']);
 
-root_app.factory('state',function () {
-
-    var data = {
-        id: 0,
-        email: "",
-        role: ""
-    };
-
-    return {
-        getId: function () {
-            return data.id;
-        },
-        getEmail: function () {
-            return data.email;
-        },
-        getRole: function () {
-            return data.role;
-        },
-        getAll: function (){
-            return data
-        },
-        setAll: function (objx) {
-            data.id = objx._id;
-            data.email = objx.email;
-            data.role = objx.role;
-        }
-    };
-});
-
-root_app.controller('LoginController',['$scope','LoginService','$window','state','$cookies',function($scope,LoginService,$window,state,$cookies){
+root_app.controller('LoginController',['$scope','LoginService','$window','$cookies',function($scope,LoginService,$window,$cookies){
     if($cookies.get('email'))
     {
         window.location.href="/dashboard"
@@ -40,8 +11,6 @@ root_app.controller('LoginController',['$scope','LoginService','$window','state'
             if(response.data.length)
             {
                 console.log('RESPONSE1',response.data);
-                state.setAll(response.data[0],'/dashboard',$window)
-                console.log('STATE',state.getAll());
                 $cookies.put("email", response.data[0].email);
                 $cookies.put("role", response.data[0].role);
                 $cookies.put("id", response.data[0]._id);
@@ -53,14 +22,12 @@ root_app.controller('LoginController',['$scope','LoginService','$window','state'
                 alert('Login Incorrect!');
             }
         });
-
-        $scope.user = {};
     }
-    console.log("LoginController",state.getAll())
 }]);
-
-root_app.controller('DashboardController',['$scope','state','LoginService','$window','$cookies',function($scope,state,LoginService,window,$cookies){
-    $scope.user = state.getAll();
+root_app.controller('ReviewController',['$scope','LoginService','$window','$cookies',function($scope,LoginService,$window,$cookies){
+    $scope.title = "Review"
+}]);
+root_app.controller('DashboardController',['$scope','LoginService','$window','$cookies',function($scope,LoginService,window,$cookies){
     if(!$cookies.get('email'))
     {
         alert('Log In to Access')
@@ -76,6 +43,10 @@ root_app.controller('DashboardController',['$scope','state','LoginService','$win
     LoginService.getEmployees('/api/users/',{"boss_email":$cookies.get('email')}).then(response=>{
         $scope.employees=response.data;
     });
+    LoginService.getAppraisals('/api/appraisals',{"author":$cookies.get('email')}).then(response=>{
+        $scope.appraisals=response.data;
+    })
+    $scope.title = "Employee Appraisal Mgmt System"
 }]);
 root_app.config(['$routeProvider','$locationProvider', function($routeProvider, $locationProvider) {
     $routeProvider
@@ -86,6 +57,10 @@ root_app.config(['$routeProvider','$locationProvider', function($routeProvider, 
         })
         .when('/dashboard',{
             templateUrl: 'views/Dashboard.html',
+            controller: 'DashboardController'
+        })
+        .when('/reviews/:reviewid',{
+            templateUrl: 'views/Review.html',
             controller: 'DashboardController'
         })
         .when('/404',

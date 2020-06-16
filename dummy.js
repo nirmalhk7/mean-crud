@@ -65,11 +65,10 @@ let AppraisalsDummy = (bossearr) =>{
         });
     }).catch(err=>{
         console.log('ERR',err);
-    }).finally(()=>{
-        process.exit(1)
-    })
+    });
 }
 
 let bossEmails=['nirmal@nirmal.com','admin@admin.com']
+Users.deleteMany({})
 usersDummy(bossEmails);
-
+AppraisalsDummy(bossEmails);

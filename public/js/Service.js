@@ -12,6 +12,7 @@ angular.module('LoginService', []).factory('LoginService', ['$http','$window', f
     let returnVal = {
         verify: postfn,
         getEmployees: getfn,
+        getAppraisals: getfn,
     }
     return returnVal;
 }]);
