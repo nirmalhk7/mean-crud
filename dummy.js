@@ -6,7 +6,7 @@ function getData(bemail){
     function getRandomElement(arr){
         return arr[Math.floor(Math.random()*arr.length)];
     }
-    let name=['lewis','max','charles','ricciardo','alpha','beta','charlie','delta','eagle','tom','cruise','trump','donald','elon','bob'];
+    let name=['lewis','max','charles','norris','sebastian','sainz','ricciardo','alpha','beta','charlie','delta','eagle','tom','cruise','trump','donald','elon','bob'];
     let emailProvider=['gmail','yahoo','hotmail','outlook'];
     let domain=['com','in','us','rus','uk','ng','ai','nz','sx','mx'];
     const fname= getRandomElement(name);
@@ -38,7 +38,7 @@ function usersDummy(bossearr){
                 arr.push(getData(bossearr[i]))
             }
             Users.insertMany(arr).then(res=>{
-                console.log("Inserted",res);
+                console.log("Inserted",res.length);
             })
             .catch(err=>{
                 console.error("error",err)
@@ -48,27 +48,52 @@ function usersDummy(bossearr){
 }
 let AppraisalsDummy = (bossearr) =>{
     console.log("Appraisal")
-    Users.aggregate([
-        { $sample: { size: 5 }},
-        {$match: { 'email': {'$nin': bossearr}}},
-    ]).then(res=>{
-        let arx=[]
-        for(let k=0;k<res.length;++k)
+    Users.aggregate([{ $sample: { size: 5 }},{$match: { 'email': {'$nin': bossearr}}}],(err,res)=>{
+        if(err)
         {
-            arx.push({rating:Math.floor(Math.random() * (4) + 1),author:res[k].boss_email,subject:`SubjectNo ${k}`,comments:`Comment ${k}`,reviewee:res[k].email});
+            console.error("ERR Aggregating",err);
         }
-        Appraisals.insertMany(arx).then(resx=>{
-            console.log("Insertedx",resx);
-        })
-        .catch(err=>{
-            console.log("Err",err);
-        });
-    }).catch(err=>{
-        console.log('ERR',err);
+        else{
+            let arx=[]
+            for(let k=0;k<res.length;++k)
+            {
+                arx.push({rating:Math.floor(Math.random() * (4) + 1),author:res[k].boss_email,subject:`SubjectNo ${k}`,comments:`Comment ${k}`,reviewee:res[k].email});
+            }
+            console.log("Appraisals Generated ",arx.length)
+            Appraisals.insertMany(arx,(err,resx)=>{
+                if(err)
+                {
+                    console.log("Error in Inserting Appraisals",err);
+                }
+                console.log("Inserted Appraisal ",resx.length);
+            });
+        }
     });
 }
 
-let bossEmails=['nirmal@nirmal.com','admin@admin.com']
-Users.deleteMany({})
-usersDummy(bossEmails);
-AppraisalsDummy(bossEmails);
+
+let bossEmails=['nirmal@nirmal.com','admin@admin.com'];
+Users.remove({},(err,ans)=>{
+    if(err)
+    {
+        console.error("ERR Users Removal",err);
+    }
+    else{
+        console.log("Removed Users");
+    }
+}).then(()=>{
+    Appraisals.remove({},(err,ans)=>{
+        if(err)
+        {
+            console.error("ERR Appraisals Removal",err);
+        }
+        else{
+            console.log("Removed Users");
+        }
+    }).then(()=>{
+        usersDummy(bossEmails)
+        
+    }).then(()=>{
+        AppraisalsDummy(bossEmails);
+    });
+})

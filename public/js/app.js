@@ -16,7 +16,10 @@ root_app.controller('LoginController',['$scope','LoginService','$window','$cooki
                 $cookies.put("id", response.data[0]._id);
                 
                // alert('HI')
-                $window.location.href = '/dashboard';
+               if(response.data[0].role=='boss') 
+                    $window.location.href = '/dashboard';
+                else
+                    $window.location.href = '/profile';
             }
             else{
                 alert('Login Incorrect!');
@@ -24,9 +27,70 @@ root_app.controller('LoginController',['$scope','LoginService','$window','$cooki
         });
     }
 }]);
-root_app.controller('ReviewController',['$scope','LoginService','$window','$cookies',function($scope,LoginService,$window,$cookies){
-    $scope.title = "Review"
+
+
+root_app.controller('ProfileController',['$scope','LoginService','$window','$cookies','$route',function($scope,LoginService,$window,$cookies,$route){
+    if(!$cookies.get('email'))
+    {
+        alert('Log In to Access')
+        window.location.href="/"
+    }
+    $scope.logout = function(){
+        console.log("LOGGING OUT");
+        $cookies.remove('email');
+        $cookies.remove('id');
+        $cookies.remove('role');
+        window.location.href="/"
+    }
+    LoginService.getUserDetails('/api/users',{"email":$cookies.get('email')}).then(response=>{
+        $scope.user=response.data[0];
+        $scope.title=$scope.user.name;
+    })
+
 }]);
+
+
+root_app.controller('ReviewController',['$scope','LoginService','$window','$cookies','$route',function($scope,LoginService,$window,$cookies,$route){
+    if(!$cookies.get('email'))
+    {
+        alert('Log In to Access')
+        window.location.href="/"
+    }
+    $scope.logout = function(){
+        console.log("LOGGING OUT");
+        $cookies.remove('email');
+        $cookies.remove('id');
+        $cookies.remove('role');
+        window.location.href="/"
+    }
+    $scope.title = "Add a Review"
+    $scope.rating = [1,2,3,4,5];
+    $scope.userid = $route.current.params.userid;
+    LoginService.getUserDetails('/api/users',{"_id":$scope.userid}).then(response=>{
+        $scope.user=response.data[0]
+    }).then(()=>{
+        if($scope.user.commentexist!=false){
+            LoginService.getAppraisalDetails('/api/appraisals',{"authorEmail":$cookies.get('email'),"revieweeEmail":$scope.user.email}).then(ans=>{
+                $scope.appraisal=ans.data[0]
+            })
+            $scope.dataexist=true;
+        }
+    })
+    $scope.submitAppraisal = function (){
+        LoginService.submitAppraisal({"rating":$scope.appraisal.rating,"subject":$scope.appraisal.subject,"comments":$scope.appraisal.comments,"authorEmail":$cookies.get('email'),"revieweeEmail":$scope.user.email},'/api/appraisals').then(response=>{
+            $window.location.href="/dashboard";
+        })
+    }
+    $scope.deleteAppraisal = function (){
+        LoginService.delete({"authorEmail":$cookies.get('email'),"revieweeEmail":$scope.user.email},'/api/appraisals').then(response=>{
+            $window.location.href="/dashboard";
+        })
+    }
+
+}]);
+
+
+
 root_app.controller('DashboardController',['$scope','LoginService','$window','$cookies',function($scope,LoginService,window,$cookies){
     if(!$cookies.get('email'))
     {
@@ -34,6 +98,7 @@ root_app.controller('DashboardController',['$scope','LoginService','$window','$c
         window.location.href="/"
     }
     $scope.logout = function(){
+        console.log("LOGGING OUT");
         $cookies.remove('email');
         $cookies.remove('id');
         $cookies.remove('role');
@@ -43,11 +108,21 @@ root_app.controller('DashboardController',['$scope','LoginService','$window','$c
     LoginService.getEmployees('/api/users/',{"boss_email":$cookies.get('email')}).then(response=>{
         $scope.employees=response.data;
     });
-    LoginService.getAppraisals('/api/appraisals',{"author":$cookies.get('email')}).then(response=>{
+    LoginService.getAppraisals('/api/appraisals',{"authorEmail":$cookies.get('email')}).then(response=>{
         $scope.appraisals=response.data;
-    })
+        console.log("ER",response.data)
+    });
+    $scope.deleteAppraisal= function(event){
+        alert(event);
+    }
     $scope.title = "Employee Appraisal Mgmt System"
 }]);
+
+
+
+
+
+
 root_app.config(['$routeProvider','$locationProvider', function($routeProvider, $locationProvider) {
     $routeProvider
         // home page
@@ -59,9 +134,13 @@ root_app.config(['$routeProvider','$locationProvider', function($routeProvider, 
             templateUrl: 'views/Dashboard.html',
             controller: 'DashboardController'
         })
-        .when('/reviews/:reviewid',{
+        .when('/profile',{
+            templateUrl: 'views/Profile.html',
+            controller: 'ProfileController'
+        })
+        .when('/reviews/:userid',{
             templateUrl: 'views/Review.html',
-            controller: 'DashboardController'
+            controller: 'ReviewController',
         })
         .when('/404',
         {

@@ -23,6 +23,10 @@ var UserSchema = new Schema({
     name:{
         type: String,
         required: true
+    },
+    commentexist:{
+        type:Boolean,
+        default: false
     }
 });
 

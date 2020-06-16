@@ -1,0 +1,27 @@
+<ng-include src="'/views/partials/navbar.html'"></ng-include>
+<ng-include src="'/views/partials/jumbotron.html'"></ng-include>
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body">
+            <div class="form-group row">
+                <label for="staticEmail" class="col-sm-2 col-form-label">Email</label>
+                <div class="col-sm-10">
+                    <input type="text" readonly class="form-control-plaintext" id="staticEmail" value={{user.email}}>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="ro,e" class="col-sm-2 col-form-label">Role</label>
+                <div class="col-sm-10">
+                    <input type="text" readonly class="form-control-plaintext" id="role" value={{user.role}}>
+                </div>
+            </div>
+            <div class="form-group row" data-ng-if="user.role === 'employee'">
+                <label for="bemail" class="col-sm-2 col-form-label">Boss Email</label>
+                <div class="col-sm-10">
+                    <input type="text" readonly class="form-control-plaintext" id="bemail" value={{user.boss_email}}>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-include src="'/views/partials/footer.html'"></ng-include>
