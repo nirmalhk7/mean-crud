@@ -21,6 +21,24 @@
                     <input type="text" readonly class="form-control-plaintext" id="bemail" value={{user.boss_email}}>
                 </div>
             </div>
+            <div data-ng-if="appraisal">
+                <hr/>
+                <h4>Your Appraisal From Your Boss</h4>
+                <div style="margin-top:2em" class="form-group row">
+                    <label for="staticEmail" class="col-sm-2 col-form-label">Ratings (5 for best)</label>
+                    <div class="col-sm-1">
+                        <input readonly type="text" class="form-control" ng-model="appraisal.rating" id="rating">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input readonly type="text" class="form-control" ng-model="appraisal.subject" id="title" placeholder="Title of Appraisal">
+                </div>
+                <div class="form-group">
+                    <label for="exampleFormControlTextarea1">Body</label>
+                    <textarea readonly class="form-control" ng-model="appraisal.comments" id="exampleFormControlTextarea1" rows="3" placeholder="Body of Appraisal"></textarea>
+                </div>
+            </div>
         </div>
     </div>
 </div>

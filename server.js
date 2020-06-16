@@ -30,7 +30,6 @@ app.get('*', function(req, res) {
     ];
     if (allowed.filter(ext => req.url.indexOf(ext) > 0).length > 0) {
         res.sendFile(path.resolve(`public/${req.url}`));
-        console.log(`public/${req.url}`,req.method,200);
      } else {
         res.sendFile(path.join(__dirname, 'public/index.html'));
         console.log("/",req.method,200);

@@ -30,10 +30,10 @@
                     </div>
                     <div id={{"c"+emp._id}} class="collapse show" aria-labelledby={{"h"+emp._id}} data-parent="#accordion">
                         <div data-ng-if="emp.commentexist === true">
-                            <div class="card-body">
-                                <p><b>Title:</b> {{ (appraisals.subject | filter:{email:emp.email}) }}</p>
-                                <p><b>Rating:</b> {{ appraisals.rating }}</p>
-                                {{ emp.review }}
+                            <div class="card-body" data-ng-repeat="x in appraisals | filter: story.revieweeEmail=emp.email">
+                                <p><b>Title:</b> {{ x.subject }}</p>
+                                <p><b>Rating:</b> {{ x.rating }}/5</p>
+                                {{ x.comments }}
                             </div>
                         </div>
                     </div>

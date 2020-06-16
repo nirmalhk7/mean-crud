@@ -46,7 +46,9 @@ root_app.controller('ProfileController',['$scope','LoginService','$window','$coo
         $scope.user=response.data[0];
         $scope.title=$scope.user.name;
     })
-
+    LoginService.getAppraisalDetails('/api/appraisals',{"revieweeEmail":$cookies.get('email')}).then(ans=>{
+        $scope.appraisal=ans.data[0]
+    })
 }]);
 
 
@@ -63,7 +65,7 @@ root_app.controller('ReviewController',['$scope','LoginService','$window','$cook
         $cookies.remove('role');
         window.location.href="/"
     }
-    $scope.title = "Add a Review"
+    $scope.role = $cookies.get('role')
     $scope.rating = [1,2,3,4,5];
     $scope.userid = $route.current.params.userid;
     LoginService.getUserDetails('/api/users',{"_id":$scope.userid}).then(response=>{
@@ -76,13 +78,28 @@ root_app.controller('ReviewController',['$scope','LoginService','$window','$cook
             $scope.dataexist=true;
         }
     })
+    $scope.title = $scope.commentexist==false ? "Add a Review": "Update a Review"
     $scope.submitAppraisal = function (){
-        LoginService.submitAppraisal({"rating":$scope.appraisal.rating,"subject":$scope.appraisal.subject,"comments":$scope.appraisal.comments,"authorEmail":$cookies.get('email'),"revieweeEmail":$scope.user.email},'/api/appraisals').then(response=>{
-            $window.location.href="/dashboard";
-        })
+        let objx={"_id":$scope.appraisal._id,"rating":$scope.appraisal.rating,"subject":$scope.appraisal.subject,"comments":$scope.appraisal.comments,"authorEmail":$cookies.get('email'),"revieweeEmail":$scope.user.email};
+        console.log("CHECK",$scope.commentexist);
+        if($scope.commentexist==false || !$scope.commentexist)
+        {
+            console.log("{efdv4redv")
+            LoginService.submitAppraisal(objx,'/api/appraisals').then(response=>{
+                $window.location.href="/dashboard";
+            })
+        }
+        else{
+            console.log(objx)
+            console.log("[[[efdv4redv")
+            LoginService.updateAppraisal(objx,'/api/appraisals').then(response=>{
+                $window.location.href="/dashboard";
+            })
+        }
     }
     $scope.deleteAppraisal = function (){
-        LoginService.delete({"authorEmail":$cookies.get('email'),"revieweeEmail":$scope.user.email},'/api/appraisals').then(response=>{
+        console.log($scope.appraisal)
+        LoginService.delete({params:{_id:$scope.appraisal._id}},'/api/appraisals').then(response=>{
             $window.location.href="/dashboard";
         })
     }
@@ -112,10 +129,7 @@ root_app.controller('DashboardController',['$scope','LoginService','$window','$c
         $scope.appraisals=response.data;
         console.log("ER",response.data)
     });
-    $scope.deleteAppraisal= function(event){
-        alert(event);
-    }
-    $scope.title = "Employee Appraisal Mgmt System"
+    $scope.title = "Employee Appraisal System"
 }]);
 
 

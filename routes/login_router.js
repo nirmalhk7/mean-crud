@@ -14,7 +14,7 @@ LoginRouter.route('/')
             console.error("ERROR",err);
         }
         else{
-            console.log("RESPONSE",ans);
+            console.log("RESPONSE Getting all Employees",ans.length);
             res.json(ans);
         }
     });

@@ -38,34 +38,65 @@ AppraisalRouter.route('/')
     })
 })
 .put((req,res,next)=>{
-    Appraisals.findOneAndUpdate({"revieweeEmail":req.body.revieweeEmail},(err,ans)=>{
+    console.log("PROPS",req.body._id,req.body);
+    Appraisals.findByIdAndUpdate(req.body._id,
+        req.body,
+        (err,ans) => {
         if(err)
         {
-            return console.error("ERR",err);
+            return console.error("ERROR",err);
         }
+        res.statusCode = 200;
+        console.log("PUTDATA",ans);
         res.json(ans);
-    })
+    });
 })
 .delete((req,res,next)=>{
-    Users.updateOne({"email":req.body.revieweeEmail},{ $set: { "commentexist" : false } },(err,ans)=>{
+    console.log("DELETE",req.body,req.query,req.params)
+    Appraisals.find(req.params._id,(err,ans)=>{
         if(err)
         {
             console.error("ERR",err);
         }
-        else{
-            console.log("RESPONSE",ans);
-            Appraisals.remove(req.body,(err,ans) => {
+        console.log("ANSWER",ans,ans[0].revieweeEmail)
+        Users.findOneAndUpdate({"email":ans[0].revieweeEmail},
+            { $set: { "commentexist" : false } },
+            {new: true},(err,ans2)=>{
                 if(err)
                 {
-                    return console.error("ERR",err);
-
+                    console.error("ERR",err);
                 }
-                res.json(ans);
-                console.log("DELETED",ans);
-            });  
-            console.log("/api/appraisals",req.method,200)
-        }
+                else{
+                    console.log("RESPONSE",ans2);
+                }
+        }).then(()=>{
+            Appraisals.deleteOne(req.params._id,(err,ans3)=>{
+                if(err) return console.error("ERR",err);
+                console.log("RESULT",ans3);
+                res.json(ans3);
+            })
+        });
     });
+    // Users.updateOne({"email":req.body.revieweeEmail},{ $set: { "commentexist" : false } },(err,ans)=>{
+    //     if(err)
+    //     {
+    //         console.error("ERR",err);
+    //     }
+    //     else{
+    //         console.log("RESPONSE",ans);
+    //         Appraisals.remove(req.body,(err,ans) => {
+    //             if(err)
+    //             {
+    //                 return console.error("ERR",err);
+
+    //             }
+    //             res.json(ans);
+    //             console.log("DELETED",ans);
+    //         }); 
+            
+    //         console.log("/api/appraisals",req.method,200)
+    //     }
+    // });
 
 
 })

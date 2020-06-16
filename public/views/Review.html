@@ -20,7 +20,7 @@
                 </div>
                 <div class="form-group row">
                     <label for="staticEmail" class="col-sm-2 col-form-label">Ratings (5 for best)</label>
-                    <div class="col-sm-1">
+                    <div class="col-sm-2">
                         <select required class="form-control" ng-model="appraisal.rating" ng-options="x for x in rating">
                         </select>
                     </div>
@@ -33,7 +33,7 @@
                     <label for="exampleFormControlTextarea1">Body</label>
                     <textarea required class="form-control" ng-model="appraisal.comments" id="exampleFormControlTextarea1" rows="3" placeholder="Body of Appraisal"></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary" ng-click="submitAppraisal()">Submit</button>
+                <button type="submit" class="btn btn-primary" ng-click="submitAppraisal()">{{ user.commentexist==true ? "Update":"Submit"}}</button>
                 <button data-ng-if="user.commentexist==true" type="submit" class="btn btn-danger" ng-click="deleteAppraisal()">Delete</button>
             </form>
         </div>

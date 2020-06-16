@@ -5,6 +5,9 @@ angular.module('LoginService', []).factory('LoginService', ['$http','$window', f
     let postfn = function (user_inp,url_endpt) {
         return $http.post(url_endpt, user_inp)
     };
+    let putfn = function (user_inp,url_endpt) {
+        return $http.put(url_endpt, user_inp)
+    };
     let deletefn = function (user_inp,url_endpt) {
         return $http.delete(url_endpt, user_inp)
     };
@@ -13,6 +16,7 @@ angular.module('LoginService', []).factory('LoginService', ['$http','$window', f
         return $http.get(url_endpt,{params:search_params})
     }
     
+    
     let returnVal = {
         verify: postfn,
         getEmployees: getfn,
@@ -20,7 +24,8 @@ angular.module('LoginService', []).factory('LoginService', ['$http','$window', f
         getUserDetails: getfn,
         submitAppraisal: postfn,
         delete: deletefn,
-        getAppraisalDetails: getfn
+        updateAppraisal: putfn,
+        getAppraisalDetails: getfn,
     }
     return returnVal;
 }]);
