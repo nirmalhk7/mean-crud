@@ -1,4 +1,4 @@
-angular.module('LoginService', []).factory('LoginService', ['$http','$window', function($http,$window) {
+angular.module('HTTPService', []).factory('HTTPService', ['$http','$window', function($http,$window) {
     
     //save method create a new contact if not already exists
     //else update the existing object
