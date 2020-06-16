@@ -28,6 +28,28 @@ root_app.controller('LoginController',['$scope','LoginService','$window','$cooki
     }
 }]);
 
+root_app.controller('SignUpController',['$scope','LoginService','$window','$cookies',function($scope,LoginService,$window,$cookies){
+    if($cookies.get('email'))
+    {
+        window.location.href="/dashboard"
+    }
+    $scope.rating=["boss","employee"]
+    $scope.SignUpVerify = function ($event) {
+        event.preventDefault();
+        LoginService.signup($scope.user,'api/users/signup').then(response=>{
+                console.log('RESPONSE1',response.data);
+                $cookies.put("email", response.data.email);
+                $cookies.put("role", response.data.role);
+                $cookies.put("id", response.data._id);
+               // alert('HI')
+               if(response.data.role=='boss') 
+                    $window.location.href = '/dashboard';
+                else
+                    $window.location.href = '/profile';
+        });
+    }
+}]);
+
 
 root_app.controller('ProfileController',['$scope','LoginService','$window','$cookies','$route',function($scope,LoginService,$window,$cookies,$route){
     if(!$cookies.get('email'))
@@ -82,7 +104,7 @@ root_app.controller('ReviewController',['$scope','LoginService','$window','$cook
     $scope.submitAppraisal = function (){
         let objx={"_id":$scope.appraisal._id,"rating":$scope.appraisal.rating,"subject":$scope.appraisal.subject,"comments":$scope.appraisal.comments,"authorEmail":$cookies.get('email'),"revieweeEmail":$scope.user.email};
         console.log("CHECK",$scope.commentexist);
-        if($scope.commentexist==false || !$scope.commentexist)
+        if($scope.commentexist==false || $scope.commentexist)
         {
             console.log("{efdv4redv")
             LoginService.submitAppraisal(objx,'/api/appraisals').then(response=>{
@@ -151,6 +173,10 @@ root_app.config(['$routeProvider','$locationProvider', function($routeProvider, 
         .when('/profile',{
             templateUrl: 'views/Profile.html',
             controller: 'ProfileController'
+        })
+        .when('/signup',{
+            templateUrl: 'views/SignUp.html',
+            controller: 'SignUpController'
         })
         .when('/reviews/:userid',{
             templateUrl: 'views/Review.html',

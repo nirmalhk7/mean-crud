@@ -39,7 +39,15 @@ LoginRouter.route('/login')
 
 LoginRouter.route('/signup')
 .post((req,res,next)=>{
-    next();
+    Users.create(req.body,(err,ans)=>{
+        if(err){
+            console.error("ERROR",err);
+        }
+        else{
+            console.log("RESPONSE SignUp",ans);
+            res.json(ans);
+        }
+    })
 })
 
 module.exports = LoginRouter;

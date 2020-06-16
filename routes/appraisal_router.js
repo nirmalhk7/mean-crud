@@ -41,6 +41,7 @@ AppraisalRouter.route('/')
     console.log("PROPS",req.body._id,req.body);
     Appraisals.findByIdAndUpdate(req.body._id,
         req.body,
+        {upsert: false},
         (err,ans) => {
         if(err)
         {
@@ -77,28 +78,6 @@ AppraisalRouter.route('/')
             })
         });
     });
-    // Users.updateOne({"email":req.body.revieweeEmail},{ $set: { "commentexist" : false } },(err,ans)=>{
-    //     if(err)
-    //     {
-    //         console.error("ERR",err);
-    //     }
-    //     else{
-    //         console.log("RESPONSE",ans);
-    //         Appraisals.remove(req.body,(err,ans) => {
-    //             if(err)
-    //             {
-    //                 return console.error("ERR",err);
-
-    //             }
-    //             res.json(ans);
-    //             console.log("DELETED",ans);
-    //         }); 
-            
-    //         console.log("/api/appraisals",req.method,200)
-    //     }
-    // });
-
-
 })
 
 module.exports = AppraisalRouter;
