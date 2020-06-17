@@ -39,7 +39,7 @@ LoginRouter.route('/login')
 
 LoginRouter.route('/signup')
 .post((req,res,next)=>{
-    Users.create(req.body,(err,ans)=>{
+    Users.create({"name":req.body.name,"email":req.body.email,"password":sha256(req.body.password),"role":req.body.role,"boss_email":req.body.boss_email},(err,ans)=>{
         if(err){
             console.error("ERROR",err);
         }

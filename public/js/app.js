@@ -91,32 +91,37 @@ root_app.controller('ReviewController',['$scope','HTTPService','$window','$cooki
     $scope.rating = [1,2,3,4,5];
     $scope.userid = $route.current.params.userid;
     HTTPService.getUserDetails('/api/users',{"_id":$scope.userid}).then(response=>{
-        $scope.user=response.data[0]
+        $scope.user=response.data[0];
+        console.log("UserDetails",$scope.user)
+        $scope.commentexist=response.data[0].commentexist;
     }).then(()=>{
         if($scope.user.commentexist!=false){
             HTTPService.getAppraisalDetails('/api/appraisals',{"authorEmail":$cookies.get('email'),"revieweeEmail":$scope.user.email}).then(ans=>{
-                $scope.appraisal=ans.data[0]
+                $scope.appraisal=ans.data[0];
+                console.log("GOTTENR EQ",$scope.appraisal);
             })
             $scope.dataexist=true;
         }
     })
     $scope.title = $scope.commentexist==false || !$scope.commentexist ? "Add a Review": "Update a Review"
     $scope.submitAppraisal = function (){
-        let objx={"_id":$scope.appraisal._id,"rating":$scope.appraisal.rating,"subject":$scope.appraisal.subject,"comments":$scope.appraisal.comments,"authorEmail":$cookies.get('email'),"revieweeEmail":$scope.user.email};
-        console.log("CHECK",$scope.commentexist);
-        if($scope.commentexist==false || $scope.commentexist)
+        let objx={"rating":$scope.appraisal.rating,"subject":$scope.appraisal.subject,"comments":$scope.appraisal.comments,"authorEmail":$cookies.get('email'),"revieweeEmail":$scope.user.email};
+        console.log("CHECK",$scope.commentexist,$scope.user);
+        if($scope.commentexist==false || !$scope.commentexist)
         {
-            console.log("{efdv4redv")
+            console.log("{efdv4redv");
             HTTPService.submitAppraisal(objx,'/api/appraisals').then(response=>{
                 $window.location.href="/dashboard";
             })
         }
         else{
+            objx["_id"]=$scope.appraisal._id;
             console.log(objx)
             console.log("[[[efdv4redv")
             HTTPService.updateAppraisal(objx,'/api/appraisals').then(response=>{
                 $window.location.href="/dashboard";
             })
+            
         }
     }
     $scope.deleteAppraisal = function (){
